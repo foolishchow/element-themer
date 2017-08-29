@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Element Themer</title>
+    <style>
+        body,html,.wrap{ position: relative; width: 100%; height: 100%; margin:0; }
+        .wrap{display: flex;}
+        .wrap>.item{flex:1}.wrap>.item2{flex:2}
+        .wrap>.item2>iframe{width: 100%;height: 100%;border:none;}
+        .build{position: absolute;right:10px;bottom:10px;min-width: 60px;height:40px;border:1px solid #ccc;padding:0 5px;
+            line-height:40px;color:#fff;background: #252525;border-radius: 2px;text-align:center;cursor: pointer}
+    </style>
+    <body>
+        <div class="wrap">
+            
+            <div class="item2"><iframe id="iframe" src="examples/index.html"></iframe></div>
+            <div class="item" id="editor"></div>
+            <div class="build" id="build" onclick="build()">build</div>
+        </div>
+        <script src="/node_modules/monaco-editor/min/vs/loader.js"></script>
+        <script>
+            require.config({
+                baseUrl:'node_modules/monaco-editor/min/',
+                'vs/nls' : {
+                    availableLanguages: {
+                        '*': 'zh-cn'
+                    }
+                }
+            })
+            require([`vs/editor/editor.main`], () => {
+                window.editor = monaco.editor.create(document.querySelector('#editor'),{
+                    selectOnLineNumbers: true,
+                    roundedSelection: false,
+                    readOnly: false,
+                    cursorStyle: 'line',
+                    automaticLayout: false,
+                    glyphMargin: true,
+                    fontSize:14,
+                    scrollbar:{
+                        horizontal:'hidden',
+                        vertical:'hidden'
+                    },
+                    theme:'vs-dark',
+                    language:'css',
+                    scrollBeyondLastLine: false,
+                    minimap: {
+                        enabled: false
+                    }
+                })
+                var save = editor.createContextKey(/*key name*/'save', /*default value*/false);
+                editor.addAction({
+                    id: 'save-file',
+                    label: 'save file',
+                    keybindings: [ monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
+                    precondition: null,
+                    keybindingContext: null,
+                    contextMenuGroupId: 'navigation',
+                    contextMenuOrder: 1.5,
+                    // Method that will be executed when the action is triggered.
+                    // @param editor The editor instance is passed in as a convinience
+                    run: function(ed) {
+                        webSocket.send(ed.getValue())
+                        return null;
+                    }
+                });
+                initSocket();
+            });
+            function initSocket(){
+                window.webSocket = new WebSocket(`ws://${window.location.host}/fileContent`);
+                // webSocket.addEventListener()
+                webSocket.onopen = function(data){
+                    console.info('open')
+                    // webSocket.send('')
+                }
+                webSocket.onmessage = function(data){
+                    editor.setValue(data.data)
+                };
+            }
+            var buildBtn = document.querySelector('#build')
+            function build(){
+                buildBtn.innerHTML = 'building...';
+                fetch('/build').then(function(code){
+                    document.querySelector('#build').innerHTML = 'build'
+                    document.querySelector('iframe').contentWindow.window.location.reload();
+                });
+            }
+        </script>
+    </body>
+</html>

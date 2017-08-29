@@ -1,0 +1,26 @@
+{
+  "name": "element-themer",
+  "version": "0.0.1",
+  "description": "a simple themer that make diy element theme easier",
+  "main": "index.js",
+  "scripts": {
+    "down": "node bin/download.js",
+    "postinstall": "et -i",
+    "build:dev": "et -o examples/dev-theme",
+    "dev": "node bin/app.js"
+  },
+  "author": "foolishchow",
+  "license": "MIT",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "download": "^6.2.5",
+    "element-theme": "^0.7.2",
+    "fs-extra": "^4.0.1",
+    "glob-stream": "^6.1.0",
+    "html-entities": "^1.2.1",
+    "element-theme-default": "git+https://github.com/ElementUI/theme-default.git",
+    "express": "^4.15.4",
+    "express-ws": "^3.0.0",
+    "monaco-editor": "^0.10.0"
+  }
+}
