@@ -18,5 +18,5 @@ after build page will auto reload
 > ps:
 this pro is a simple and poor coded  
 some code might have bugs also  
-you can make it with `electron` to make it better
+you can make it with `electron` to make it better   
 have fun ~
