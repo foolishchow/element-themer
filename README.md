@@ -7,6 +7,7 @@
 git clone https://github.com/foolishchow/element-themer.git
 cd element-themer
 yarn 
+// mkdir examples 
 // download the example page
 yarn down
 yarn dev
